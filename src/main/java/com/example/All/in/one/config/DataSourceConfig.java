@@ -105,19 +105,19 @@ public class DataSourceConfig {
 
     private final AWSSimpleSystemsManagement ssmClient;
 
-    @Value("${aws.ssm.db-endpoint-param}")
+    @Value("${aws.ssm.db-endpoint-param:/s3-image-upload-app/database/endpoint}")
     private String dbEndpointParam;
 
-    @Value("${aws.ssm.db-name-param}")
+    @Value("${aws.ssm.db-name-param:/s3-image-upload-app/database/name}")
     private String dbNameParam;
 
-    @Value("${aws.ssm.db-username-param}")
+    @Value("${aws.ssm.db-username-param:/s3-image-upload-app/database/username}")
     private String dbUsernameParam;
 
-    @Value("${aws.ssm.db-password-param}")
+    @Value("${aws.ssm.db-password-param:/s3-image-upload-app/database/password}")
     private String dbPasswordParam;
 
-    @Value("${spring.datasource.timeout:30000}")  // Default 30 seconds timeout
+    @Value("${spring.datasource.timeout:30000}")
     private int connectionTimeout;
 
     public DataSourceConfig() {
@@ -144,23 +144,20 @@ public class DataSourceConfig {
     @Primary
     public DataSource dataSource() {
         try {
+            // Retrieve database parameters from SSM Parameter Store
             String endpoint = getParameterValue(dbEndpointParam);
             String dbName = getParameterValue(dbNameParam);
             String username = getParameterValue(dbUsernameParam);
             String password = getParameterValue(dbPasswordParam);
-            String bucketName = getParameterValue("\n" +
-                    "/s3-image-upload-app/s3/bucket-name");
-
-            System.out.println("name " + bucketName);
 
             logger.info("Configuring DataSource with endpoint: {}, database: {}", endpoint, dbName);
 
             String jdbcUrl = String.format(
                     "jdbc:postgresql://%s:5432/%s?connectTimeout=%d" +
-                            "&ssl=true" +  // Enable SSL
-                            "&sslmode=require" +  // Require SSL connection
-                            "&tcpKeepAlive=true" +  // Maintain TCP connection
-                            "&socketTimeout=30" +  // Socket timeout
+                            "&ssl=true" +
+                            "&sslmode=require" +
+                            "&tcpKeepAlive=true" +
+                            "&socketTimeout=30" +
                             "&applicationName=s3-image-upload-app",
                     endpoint, dbName, connectionTimeout
             );
@@ -177,4 +174,3 @@ public class DataSourceConfig {
         }
     }
 }
-
