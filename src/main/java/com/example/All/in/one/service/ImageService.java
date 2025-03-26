@@ -31,8 +31,8 @@ public class ImageService {
 
     private final ParameterStoreService parameterStoreService;
 
-    @Value("${aws.s3.bucket-name}")
-    private String bucketName;
+//    @Value("${aws.s3.bucket-name}")
+    private String bucketName = "s3-image-upload-bucket-nic-amalitech";
 
     public ImageService(S3Client s3Client, ImageRepository imageRepository, ParameterStoreService parameterStoreService) {
         this.s3Client = s3Client;
@@ -50,7 +50,7 @@ public class ImageService {
         String key = UUID.randomUUID().toString() + "-" + originalFilename;
 
         PutObjectRequest request = PutObjectRequest.builder()
-                .bucket("s3-image-upload-bucket-nic-amalitech")
+                .bucket(bucketName)
                 .key(key)
                 .contentType(file.getContentType())
                 .build();

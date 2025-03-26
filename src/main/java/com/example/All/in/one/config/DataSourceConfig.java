@@ -39,7 +39,6 @@ public class DataSourceConfig {
             throw new RuntimeException("Could not retrieve database parameter: " + parameterName, e);
         }
     }
-
     @Bean
     public DataSource dataSource() {
         try {
@@ -49,11 +48,14 @@ public class DataSourceConfig {
             String username = getParameterValue("/s3-image-upload-app/database/username");
             String password = getParameterValue("/s3-image-upload-app/database/password");
 
-            logger.info("Database Endpoint: {}", endpoint);
-            logger.info("Database Name: {}", dbName);
-            logger.info("Database Username: {}", username);
+            // Enhanced logging for debugging
+            logger.error("Full Connection Details:");
+            logger.error("Endpoint: {}", endpoint);
+            logger.error("Database Name: {}", dbName);
+            logger.error("Username: {}", username);
+            logger.error("Password Length: {}", password != null ? password.length() : "null");
 
-            // Construct JDBC URL with improved configuration
+            // Construct JDBC URL with more verbose logging
             String jdbcUrl = String.format(
                     "jdbc:postgresql://%s:5432/%s?connectTimeout=10000" +
                             "&tcpKeepAlive=true" +
@@ -62,7 +64,7 @@ public class DataSourceConfig {
                     endpoint, dbName
             );
 
-            logger.info("Constructed JDBC URL: {}", jdbcUrl);
+            logger.error("Constructed JDBC URL: {}", jdbcUrl);
 
             HikariDataSource dataSource = DataSourceBuilder.create()
                     .type(HikariDataSource.class)
@@ -71,6 +73,8 @@ public class DataSourceConfig {
                     .username(username)
                     .password(password)
                     .build();
+
+            // Existing HikariCP configuration...
 
             // Additional HikariCP configuration for better debugging
             dataSource.setMaximumPoolSize(10);
@@ -81,10 +85,64 @@ public class DataSourceConfig {
             dataSource.setPoolName("S3ImageUploadHikariPool");
 
             logger.info("DataSource successfully created");
+
             return dataSource;
         } catch (Exception e) {
-            logger.error("Failed to create DataSource", e);
-            throw new RuntimeException("Failed to create DataSource", e);
+            logger.error("Comprehensive DataSource Creation Error", e);
+            throw new RuntimeException("Detailed DataSource Creation Failure", e);
         }
     }
+
+//    @Bean
+//    public DataSource dataSource() {
+//        try {
+//            // Retrieve database parameters from SSM
+//            String endpoint = getParameterValue("/s3-image-upload-app/database/endpoint");
+//            String dbName = getParameterValue("/s3-image-upload-app/database/name");
+//            String username = getParameterValue("/s3-image-upload-app/database/username");
+//            String password = getParameterValue("/s3-image-upload-app/database/password");
+//
+//            System.out.println("Endpoint: " + endpoint);
+//            System.out.println("DB Name: " + dbName);
+//            System.out.println("Username: " + username);
+//            System.out.println("Password: " + password);
+//
+//            logger.info("Database Endpoint: {}", endpoint);
+//            logger.info("Database Name: {}", dbName);
+//            logger.info("Database Username: {}", username);
+//
+//            // Construct JDBC URL with improved configuration
+//            String jdbcUrl = String.format(
+//                    "jdbc:postgresql://%s:5432/%s?connectTimeout=10000" +
+//                            "&tcpKeepAlive=true" +
+//                            "&socketTimeout=30000" +
+//                            "&applicationName=s3-image-upload-app",
+//                    endpoint, dbName
+//            );
+//
+//            logger.info("Constructed JDBC URL: {}", jdbcUrl);
+//
+//            HikariDataSource dataSource = DataSourceBuilder.create()
+//                    .type(HikariDataSource.class)
+//                    .driverClassName("org.postgresql.Driver")
+//                    .url(jdbcUrl)
+//                    .username(username)
+//                    .password(password)
+//                    .build();
+//
+//            // Additional HikariCP configuration for better debugging
+//            dataSource.setMaximumPoolSize(10);
+//            dataSource.setMinimumIdle(5);
+//            dataSource.setConnectionTimeout(30000);
+//            dataSource.setIdleTimeout(600000);
+//            dataSource.setMaxLifetime(1800000);
+//            dataSource.setPoolName("S3ImageUploadHikariPool");
+//
+//            logger.info("DataSource successfully created");
+//            return dataSource;
+//        } catch (Exception e) {
+//            logger.error("Failed to create DataSource", e);
+//            throw new RuntimeException("Failed to create DataSource", e);
+//        }
+//    }
 }

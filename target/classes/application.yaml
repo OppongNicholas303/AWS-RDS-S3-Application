@@ -9,9 +9,9 @@
 #
 #
 #  datasource:
-#    url: jdbc:postgresql://localhost:5432/mall #${DB_URL}
-#    username: postgres  #${DB_USERNAME}
-#    password: postgres #${DB_PASSWORD}
+#    url: jdbc:postgresql://s3-with-rds-app-multiazpostgresqldatabase-vnxplxkoyh40.cxo2ykisqxby.us-east-2.rds.amazonaws.com/imagemetadatadb #${DB_URL}
+#    username: dbadmin  #${DB_USERNAME}
+#    password: Oppong0243911336 #${DB_PASSWORD}
 #    driver-class-name: org.postgresql.Driver
 #    hikari:
 #      maximum-pool-size: 10

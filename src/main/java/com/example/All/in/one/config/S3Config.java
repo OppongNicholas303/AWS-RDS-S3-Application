@@ -12,8 +12,8 @@ import software.amazon.awssdk.services.ssm.SsmClient;
 @Configuration
 public class S3Config {
 
-    @Value("${aws.region}")
-    private String awsRegion;
+//    @Value("${aws.region}")
+    private String awsRegion = "us-east-2"; ;
 
     @Bean
     public S3Client s3Client() {
@@ -25,7 +25,7 @@ public class S3Config {
     @Bean
     public SsmClient ssmClient() {
         return SsmClient.builder()
-                .region(Region.US_EAST_1)
+                .region(Region.US_EAST_2)
                 .build();
     }
 //
