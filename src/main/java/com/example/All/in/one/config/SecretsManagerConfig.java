@@ -11,7 +11,7 @@ public class SecretsManagerConfig {
     @Bean
     public SecretsManagerClient secretsManagerClient() {
         return SecretsManagerClient.builder()
-                .region(Region.US_EAST_1) // Use your region
+                .region(Region.US_EAST_2) // Use your region
                 .build();
     }
 }
