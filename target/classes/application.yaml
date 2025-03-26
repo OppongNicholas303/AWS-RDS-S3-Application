@@ -101,11 +101,11 @@ server:
 aws:
   region: ${AWS_REGION:us-east-1}
   ssm:
-    db-endpoint-param: /s3-image-upload-app/database/endpoint
-    db-name-param: /s3-image-upload-app/database/name
-    db-username-param: /s3-image-upload-app/database/username
-    db-password-param: /s3-image-upload-app/database/password
-    s3-bucket-param: /s3-image-upload-app/s3/bucket-name
+    db-endpoint-param: /snapshare/db/endpoint
+    db-name-param: /snapshare/db/name
+    db-username-param: /snapshare/db/username
+    db-password-param: /snapshare/db/password
+
 
   s3:
     bucket: ${aws.ssm.s3-bucket-param}

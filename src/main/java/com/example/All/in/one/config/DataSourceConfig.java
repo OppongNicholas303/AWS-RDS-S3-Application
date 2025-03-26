@@ -43,10 +43,10 @@ public class DataSourceConfig {
     public DataSource dataSource() {
         try {
             // Retrieve database parameters from SSM
-            String endpoint = getParameterValue("/snapshare/db/endpoint");
-            String dbName = getParameterValue("/snapshare/db/name");
-            String username = getParameterValue("/snapshare/db/username");
-            String password = getParameterValue("/snapshare/db/password");
+            String endpoint = getParameterValue("/s3-image-upload-app/database/endpoint");
+            String dbName = getParameterValue("/s3-image-upload-app/database/name");
+            String username = getParameterValue("/s3-image-upload-app/database/username");
+            String password = getParameterValue("/s3-image-upload-app/database/password");
 
             // Enhanced logging for debugging
             logger.error("Full Connection Details:");
