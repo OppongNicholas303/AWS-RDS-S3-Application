@@ -79,6 +79,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+  hikari:
+    maximum-pool-size: 10
+    connection-timeout: 30000
+
   servlet:
     multipart:
       max-file-size: 10MB
@@ -120,3 +124,6 @@ logging:
     root: INFO
     com.awsimageapp: DEBUG
     org.hibernate.SQL: INFO
+    com.zaxxer.hikari: DEBUG
+
+

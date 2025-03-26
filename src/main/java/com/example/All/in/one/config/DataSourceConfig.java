@@ -1,5 +1,7 @@
 package com.example.All.in.one.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -12,23 +14,28 @@ import javax.sql.DataSource;
 
 @Configuration
 public class DataSourceConfig {
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
 
     private final SsmClient ssmClient;
 
     public DataSourceConfig() {
         this.ssmClient = SsmClient.builder()
-                .region(Region.US_EAST_2)  // Match your AWS region
+                .region(Region.US_EAST_2)
                 .build();
     }
 
     private String getParameterValue(String parameterName) {
         try {
+            logger.info("Retrieving parameter: {}", parameterName);
             GetParameterRequest request = GetParameterRequest.builder()
                     .name(parameterName)
                     .withDecryption(true)
                     .build();
-            return ssmClient.getParameter(request).parameter().value();
+            String value = ssmClient.getParameter(request).parameter().value();
+            logger.info("Successfully retrieved parameter: {}", parameterName);
+            return value;
         } catch (Exception e) {
+            logger.error("Failed to retrieve parameter: {}", parameterName, e);
             throw new RuntimeException("Could not retrieve database parameter: " + parameterName, e);
         }
     }
@@ -42,26 +49,41 @@ public class DataSourceConfig {
             String username = getParameterValue("/s3-image-upload-app/database/username");
             String password = getParameterValue("/s3-image-upload-app/database/password");
 
+            logger.info("Database Endpoint: {}", endpoint);
+            logger.info("Database Name: {}", dbName);
+            logger.info("Database Username: {}", username);
+
             // Construct JDBC URL with improved configuration
             String jdbcUrl = String.format(
                     "jdbc:postgresql://%s:5432/%s?connectTimeout=10000" +
-                            "&ssl=true" +
-                            "&sslmode=require" +
                             "&tcpKeepAlive=true" +
                             "&socketTimeout=30000" +
-                            "&applicationName=s3-image-upload-app" +
-                            "&loggerLevel=TRACE", // Add detailed logging
+                            "&applicationName=s3-image-upload-app",
                     endpoint, dbName
             );
 
-            return DataSourceBuilder.create()
+            logger.info("Constructed JDBC URL: {}", jdbcUrl);
+
+            HikariDataSource dataSource = DataSourceBuilder.create()
                     .type(HikariDataSource.class)
                     .driverClassName("org.postgresql.Driver")
                     .url(jdbcUrl)
                     .username(username)
                     .password(password)
                     .build();
+
+            // Additional HikariCP configuration for better debugging
+            dataSource.setMaximumPoolSize(10);
+            dataSource.setMinimumIdle(5);
+            dataSource.setConnectionTimeout(30000);
+            dataSource.setIdleTimeout(600000);
+            dataSource.setMaxLifetime(1800000);
+            dataSource.setPoolName("S3ImageUploadHikariPool");
+
+            logger.info("DataSource successfully created");
+            return dataSource;
         } catch (Exception e) {
+            logger.error("Failed to create DataSource", e);
             throw new RuntimeException("Failed to create DataSource", e);
         }
     }
