@@ -66,6 +66,7 @@ public class DataSourceConfig {
 
             logger.error("Constructed JDBC URL: {}", jdbcUrl);
 
+            System.out.println("Constructed JDBC URL: " + jdbcUrl);
             HikariDataSource dataSource = DataSourceBuilder.create()
                     .type(HikariDataSource.class)
                     .driverClassName("org.postgresql.Driver")
