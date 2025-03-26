@@ -106,7 +106,6 @@ aws:
     db-username-param: /snapshare/db/username
     db-password-param: /snapshare/db/password
 
-
   s3:
     bucket: ${aws.ssm.s3-bucket-param}
     presigned-url-expiration: 3600

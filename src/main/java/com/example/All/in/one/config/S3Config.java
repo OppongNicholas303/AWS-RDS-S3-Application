@@ -15,12 +15,12 @@ public class S3Config {
 //    @Value("${aws.region}")
     private String awsRegion = "us-east-2"; ;
 
-    @Bean
-    public S3Client s3Client() {
-        return S3Client.builder()
-                .region(Region.of(awsRegion))
-                .build();  // Use the default credentials provider chain
-    }
+//    @Bean
+//    public S3Client s3Client() {
+//        return S3Client.builder()
+//                .region(Region.of(awsRegion))
+//                .build();  // Use the default credentials provider chain
+//    }
 
     @Bean
     public SsmClient ssmClient() {
@@ -37,11 +37,11 @@ public class S3Config {
 //                .build();
 //    }
 
-//    @Bean
-//    public S3Client s3Client() {
-//        return S3Client.builder()
-//                .region(Region.of(awsRegion))
-//                .credentialsProvider(ProfileCredentialsProvider.create()) // Uses ~/.aws/credentials
-//                .build();
-//    }
+    @Bean
+    public S3Client s3Client() {
+        return S3Client.builder()
+                .region(Region.of(awsRegion))
+                .credentialsProvider(ProfileCredentialsProvider.create()) // Uses ~/.aws/credentials
+                .build();
+    }
 }
