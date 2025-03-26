@@ -50,7 +50,7 @@ public class ImageService {
         String key = UUID.randomUUID().toString() + "-" + originalFilename;
 
         PutObjectRequest request = PutObjectRequest.builder()
-                .bucket("week5-lab-bucket-nicholas")
+                .bucket("s3-image-upload-bucket-nic-amalitech")
                 .key(key)
                 .contentType(file.getContentType())
                 .build();
