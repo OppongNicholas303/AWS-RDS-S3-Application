@@ -67,14 +67,14 @@ jobs:
       id: task-def
       run: |
         # Get current task definition
-        aws ecs describe-task-definition --task-definition s3App-task --query taskDefinition > task-definition.json
+        aws ecs describe-task-definition --task-definition rds-s3-ecs-task --query taskDefinition > task-definition.json
         
         # Update container image in task definition to use latest tag
         jq '.containerDefinitions[0].image = "677276083056.dkr.ecr.us-east-2.amazonaws.com/aws-s3-rds-application:latest"' task-definition.json > new-task-definition.json
         
         # Register new task definition version
         NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
-          --family s3App-task \
+          --family rds-s3-ecs-task \
           --requires-compatibilities FARGATE \
           --network-mode awsvpc \
           --cpu 2048 \
@@ -97,8 +97,8 @@ jobs:
               Properties:
                 TaskDefinition: "${TASK_DEF_ARN}"
                 LoadBalancerInfo:
-                  ContainerName: "s3App-container"
-                  ContainerPort: 8080
+                  ContainerName: "rds-s3-ecs-container"
+                  ContainerPort: 3004
                 PlatformVersion: "LATEST"
         EOF
         
@@ -111,8 +111,8 @@ jobs:
     - name: Start CodeDeploy Deployment
       run: |
         DEPLOYMENT_ID=$(aws deploy create-deployment \
-          --application-name s3App-application \
-          --deployment-group-name s3App-deployment-group \
+          --application-name rds-s3-ecs-application \
+          --deployment-group-name rds-s3-ecs-deployment-group \
           --revision revisionType=AppSpecContent,appSpecContent="{content='$(cat appspec.yaml)'}" \
           --description "Automated deployment via GitHub Actions" \
           --query 'deploymentId' \
