@@ -98,7 +98,7 @@ jobs:
                 TaskDefinition: "${TASK_DEF_ARN}"
                 LoadBalancerInfo:
                   ContainerName: "rds-s3-ecs-container"
-                  ContainerPort: 8080
+                  ContainerPort: 3004
                 PlatformVersion: "LATEST"
         EOF
         
